@@ -1,0 +1,358 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manuela & Alex</title>
+<style>
+  :root{
+    --bg:#07050f;
+    --pink:#ff2e9a;
+    --cyan:#28f5e0;
+    --violet:#8b5cf6;
+    --gold:#ffd166;
+    --text:#f5f0ff;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Segoe UI', system-ui, sans-serif;
+    overflow-x:hidden;
+    position:relative;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,46,154,.18), transparent 40%),
+      radial-gradient(circle at 85% 10%, rgba(40,245,224,.15), transparent 40%),
+      radial-gradient(circle at 50% 90%, rgba(139,92,246,.20), transparent 45%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .hearts{position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:1;}
+  .heart{
+    position:absolute; bottom:-40px; font-size:18px;
+    color:var(--pink); opacity:.55;
+    animation:float 12s linear infinite;
+    text-shadow:0 0 8px var(--pink);
+  }
+  @keyframes float{
+    0%{transform:translateY(0) translateX(0) rotate(0deg); opacity:0;}
+    10%{opacity:.6;}
+    100%{transform:translateY(-110vh) translateX(20px) rotate(30deg); opacity:0;}
+  }
+
+  section{position:relative; z-index:2; padding:80px 20px; max-width:900px; margin:0 auto;}
+
+  .hero{
+    min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center;
+    padding:40px 20px;
+  }
+  .eyebrow{
+    letter-spacing:6px; font-size:12px; color:var(--cyan);
+    text-shadow:0 0 10px var(--cyan); margin-bottom:14px;
+  }
+  .names{
+    font-size:clamp(34px,9vw,84px);
+    font-weight:800; line-height:1.05;
+    background:linear-gradient(90deg,var(--pink),var(--violet),var(--cyan));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 40px rgba(255,46,154,.35);
+    animation:glow 3s ease-in-out infinite alternate;
+  }
+  @keyframes glow{
+    from{filter:drop-shadow(0 0 6px rgba(255,46,154,.4));}
+    to{filter:drop-shadow(0 0 22px rgba(139,92,246,.6));}
+  }
+  .amp{color:var(--gold); text-shadow:0 0 14px var(--gold);}
+  .subtitle{margin-top:16px; font-size:16px; color:#c9c2e0; max-width:520px;}
+
+  .countdown{
+    margin-top:28px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+  }
+  .cbox{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,46,154,.4);
+    border-radius:14px; padding:12px 16px; min-width:72px;
+    box-shadow:0 0 20px rgba(255,46,154,.15);
+  }
+  .cbox b{display:block; font-size:24px; color:var(--cyan); text-shadow:0 0 10px var(--cyan);}
+  .cbox span{font-size:10px; letter-spacing:1.5px; color:#a99cd6;}
+
+  .scrolldown{margin-top:28px; font-size:11px; letter-spacing:3px; color:#8b7fb0; animation:bob 2s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+  .stitle{
+    font-size:clamp(24px,5vw,42px); font-weight:800; text-align:center;
+    margin-bottom:12px; color:#fff;
+  }
+  .sline{
+    width:70px; height:3px; margin:0 auto 40px;
+    background:linear-gradient(90deg,var(--pink),var(--cyan)); border-radius:3px;
+    box-shadow:0 0 12px var(--pink);
+  }
+
+  .timeline{display:flex; flex-direction:column; gap:34px;}
+  .tcard{
+    display:grid; grid-template-columns:110px 1fr; gap:22px; align-items:center;
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(139,92,246,.35);
+    border-radius:18px; padding:18px;
+    opacity:0; transform:translateY(30px);
+    transition:opacity .8s ease, transform .8s ease;
+  }
+  .tcard.show{opacity:1; transform:translateY(0);}
+  .tcard img{width:100%; height:110px; object-fit:cover; border-radius:12px; border:1px solid rgba(255,255,255,.15);}
+  .tcard h3{color:var(--pink); text-shadow:0 0 8px rgba(255,46,154,.5); font-size:20px; margin-bottom:6px;}
+  .tcard p{color:#c9c2e0; font-size:14px;}
+
+  .phrase-wrap{text-align:center; padding:90px 20px;}
+  .phrase{
+    font-size:clamp(22px,5vw,42px); font-style:italic; font-weight:700;
+    max-width:760px; margin:0 auto; line-height:1.4;
+    color:#fff; text-shadow:0 0 18px rgba(139,92,246,.6);
+  }
+  .phrase .hl{color:var(--pink); text-shadow:0 0 16px var(--pink);}
+  .signoff{margin-top:24px; letter-spacing:3px; font-size:12px; color:var(--gold);}
+
+  .slider-wrap{position:relative; width:100%; max-width:480px; margin:0 auto;}
+  .slider{
+    position:relative; width:100%;
+    aspect-ratio:4/5; border-radius:24px; overflow:hidden;
+    border:2px solid rgba(40,245,224,.4);
+    box-shadow:0 0 40px rgba(40,245,224,.2);
+    touch-action:pan-y;
+    background:#000;
+  }
+  .slide{position:absolute; inset:0; opacity:0; transition:opacity .9s ease;}
+  .slide.active{opacity:1;}
+  .slide .bg{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; filter:blur(25px) brightness(.55); transform:scale(1.2);
+  }
+  .slide .fg{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:contain;
+  }
+  .navbtn{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:38px; height:38px; border-radius:50%; border:none; cursor:pointer;
+    background:rgba(0,0,0,.45); color:#fff; font-size:18px; z-index:3;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .navbtn.prev{left:10px;} .navbtn.next{right:10px;}
+  .dots{display:flex; justify-content:center; gap:7px; margin-top:16px; flex-wrap:wrap;}
+  .dot{width:7px; height:7px; border-radius:50%; background:#3c3555; transition:.3s; border:none; cursor:pointer; padding:0;}
+  .dot.active{background:var(--pink); box-shadow:0 0 10px var(--pink); width:20px; border-radius:5px;}
+
+  .music{
+    display:flex; align-items:center; gap:16px; justify-content:center;
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,209,102,.4);
+    border-radius:20px; padding:14px 20px; max-width:420px; margin:0 auto;
+  }
+  .playbtn{
+    width:48px; height:48px; border-radius:50%; border:none; cursor:pointer;
+    background:linear-gradient(135deg,var(--pink),var(--violet));
+    color:#fff; font-size:18px; box-shadow:0 0 18px rgba(255,46,154,.5);
+    flex-shrink:0;
+  }
+  .music p{font-size:13px; color:#c9c2e0;}
+  .music b{display:block; color:#fff; font-size:14px;}
+  .trackbtn{padding:7px 12px;border-radius:20px;border:1px solid #28f5e0;background:transparent;color:#fff;cursor:pointer;font-size:11px;}
+  .trackbtn.on{background:rgba(255,46,154,.15);border-color:#ff2e9a;}
+
+  footer{text-align:center; padding:60px 20px 90px; color:#7a6f99; font-size:12px; letter-spacing:2px;}
+  footer span{color:var(--pink);}
+
+  @media(max-width:520px){
+    .hero{padding:26px 16px;}
+    .subtitle{font-size:14px;}
+    .countdown{margin-top:22px; gap:8px;}
+    .cbox{padding:10px 12px; min-width:64px;}
+    .cbox b{font-size:20px;}
+    .music{margin-top:22px !important; padding:12px 16px;}
+    .tcard{grid-template-columns:1fr;}
+    .tcard img{height:180px;}
+    section{padding:60px 16px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hearts" id="hearts"></div>
+
+<section class="hero">
+  <div class="eyebrow">ANIVERSARIO</div>
+  <h1 class="names">Manuela <span class="amp">&amp;</span> Alex</h1>
+  <p class="subtitle">Desde el 22 de mayo, cada mes contigo se ha sentido como el primero.</p>
+  <div class="countdown" id="countdown"></div>
+  <div class="scrolldown">DESLIZA PARA VER MÁS &#9662;</div>
+
+  <div class="music" style="flex-direction:column; gap:12px; margin-top:26px;">
+    <div style="display:flex; gap:14px; align-items:center;">
+      <button class="playbtn" id="playBtn">&#9658;</button>
+      <p id="trackLabel"><b>Algo Que Se Quede</b>Grupo Niche</p>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button id="track1Btn" class="trackbtn on">Algo Que Se Quede</button>
+      <button id="track2Btn" class="trackbtn">Si Me Preguntaran</button>
+    </div>
+  </div>
+  <audio id="audio" src="img/cancion1.mp3" loop></audio>
+</section>
+
+<section id="timeline">
+  <h2 class="stitle">Nuestro camino</h2>
+  <div class="sline"></div>
+  <div class="timeline" id="timelineList">
+    <div class="tcard">
+      <img src="img/MESE%201.webp" alt="1 mes">
+      <div><h3>1 mes juntos</h3><p>22 de mayo &mdash; 22 de junio de 2026. El comienzo de algo bonito.</p></div>
+    </div>
+    <div class="tcard">
+      <img src="img/MESES%202.webp" alt="2 meses">
+      <div><h3>2 meses juntos</h3><p>22 de junio &mdash; 22 de julio de 2026. Dos meses convertidos en la mejor parte de mi vida contigo.</p></div>
+    </div>
+    <div class="tcard">
+      <img src="img/JUNTOS.webp" alt="3 meses">
+      <div><h3>3 meses juntos</h3><p>22 de agosto de 2026. Hoy celebramos lo que seguimos construyendo.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="phrase-wrap">
+  <p class="phrase">"<span class="hl">Manuela</span>, contigo hasta lo m&aacute;s simple se siente especial."</p>
+  <div class="signoff">&mdash; CON TODO MI CORAZ&Oacute;N, ALEX</div>
+</section>
+
+<section id="galeria">
+  <h2 class="stitle">Nuestros recuerdos</h2>
+  <div class="sline"></div>
+  <div class="slider-wrap">
+    <div class="slider" id="slider">
+      <button class="navbtn prev" id="prevBtn">&#10094;</button>
+      <button class="navbtn next" id="nextBtn">&#10095;</button>
+    </div>
+    <div class="dots" id="dots"></div>
+  </div>
+</section>
+
+<footer>HECHO CON <span>&#9829;</span> POR ALEX PARA MANUELA</footer>
+
+<script>
+  const heartsBox = document.getElementById('hearts');
+  for(let i=0;i<22;i++){
+    const h = document.createElement('div');
+    h.className='heart';
+    h.textContent = i%3===0 ? '\u2726' : '\u2665';
+    h.style.left = Math.random()*100+'%';
+    h.style.animationDuration = (9+Math.random()*8)+'s';
+    h.style.animationDelay = (Math.random()*10)+'s';
+    h.style.fontSize = (12+Math.random()*14)+'px';
+    heartsBox.appendChild(h);
+  }
+
+  const inicio = new Date('2026-05-22T00:00:00');
+  const el = document.getElementById('countdown');
+  function actualizar(){
+    const ahora = new Date();
+    let meses = (ahora.getFullYear()-inicio.getFullYear())*12 + (ahora.getMonth()-inicio.getMonth());
+    if(ahora.getDate() < inicio.getDate()) meses--;
+    const proximo = new Date(inicio);
+    proximo.setMonth(inicio.getMonth() + meses + 1);
+    const diffMs = proximo - ahora;
+    const dias = Math.max(0, Math.floor(diffMs/(1000*60*60*24)));
+    const horas = Math.max(0, Math.floor((diffMs/(1000*60*60))%24));
+    el.innerHTML =
+      '<div class="cbox"><b>'+meses+'</b><span>MESES</span></div>'+
+      '<div class="cbox"><b>'+dias+'</b><span>D\u00cdAS PARA EL SIGUIENTE</span></div>'+
+      '<div class="cbox"><b>'+horas+'</b><span>HORAS</span></div>';
+  }
+  actualizar();
+  setInterval(actualizar, 60000);
+
+  const cards = document.querySelectorAll('.tcard');
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('show'); });
+  }, {threshold:.2});
+  cards.forEach(c=>io.observe(c));
+
+  const fotos = [
+    'img/CON%20ESTRELLITA%201.webp','img/CON%20ESTRELLITA%202.webp','img/CON%20ESTRELLITA.webp',
+    'img/EN%20TU%20PIEL.webp','img/FAMILIA%201.webp','img/FAMILIA.webp','img/FATO%203.webp',
+    'img/FOTO%201.webp','img/FOTO%2010.webp','img/FOTO%2011.webp','img/FOTO%2012.webp',
+    'img/FOTO%202.webp','img/FOTO%204.webp','img/FOTO%205.webp','img/FOTO%206.webp',
+    'img/FOTO%207.webp','img/FOTO%208.webp','img/FOTO%209.webp','img/MI%20MIMO%201.webp',
+    'img/MI%20MIMO%202.webp','img/NUESTRA%20ESTRELLITA.webp','img/TU%20MIMO.webp'
+  ];
+  const sliderBox = document.getElementById('slider');
+  const dotsBox = document.getElementById('dots');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  fotos.forEach((src,i)=>{
+    const slide = document.createElement('div');
+    slide.className = 'slide'+(i===0?' active':'');
+    slide.innerHTML = '<img class="bg" src="'+src+'" alt=""><img class="fg" src="'+src+'" alt="Recuerdo '+(i+1)+'">';
+    sliderBox.insertBefore(slide, prevBtn);
+    const d = document.createElement('button');
+    d.className='dot'+(i===0?' active':'');
+    d.addEventListener('click', ()=> goTo(i));
+    dotsBox.appendChild(d);
+  });
+
+  let idx=0;
+  const slides = sliderBox.querySelectorAll('.slide');
+  const dots = dotsBox.querySelectorAll('.dot');
+  let timer;
+
+  function goTo(n){
+    slides[idx].classList.remove('active');
+    dots[idx].classList.remove('active');
+    idx = (n+slides.length)%slides.length;
+    slides[idx].classList.add('active');
+    dots[idx].classList.add('active');
+  }
+  function restartTimer(){
+    clearInterval(timer);
+    timer = setInterval(()=> goTo(idx+1), 3800);
+  }
+  prevBtn.addEventListener('click', ()=>{ goTo(idx-1); restartTimer(); });
+  nextBtn.addEventListener('click', ()=>{ goTo(idx+1); restartTimer(); });
+
+  let touchX=0;
+  sliderBox.addEventListener('touchstart', e=>{ touchX = e.touches[0].clientX; }, {passive:true});
+  sliderBox.addEventListener('touchend', e=>{
+    const dx = e.changedTouches[0].clientX - touchX;
+    if(Math.abs(dx) > 40){ goTo(dx < 0 ? idx+1 : idx-1); restartTimer(); }
+  }, {passive:true});
+
+  restartTimer();
+
+  const audio = document.getElementById('audio');
+  const playBtn = document.getElementById('playBtn');
+  const trackLabel = document.getElementById('trackLabel');
+  const track1Btn = document.getElementById('track1Btn');
+  const track2Btn = document.getElementById('track2Btn');
+  playBtn.addEventListener('click', ()=>{
+    if(audio.paused){ audio.play(); playBtn.textContent='\u275a\u275a'; }
+    else { audio.pause(); playBtn.textContent='\u25b6'; }
+  });
+  function setTrack(src, label, artist, activeBtn, otherBtn){
+    const wasPlaying = !audio.paused;
+    audio.src = src;
+    trackLabel.innerHTML = '<b>'+label+'</b>'+artist;
+    activeBtn.classList.add('on');
+    otherBtn.classList.remove('on');
+    if(wasPlaying){ audio.play(); playBtn.textContent='\u275a\u275a'; }
+  }
+  track1Btn.addEventListener('click', ()=> setTrack('img/cancion1.mp3','Algo Que Se Quede','Grupo Niche', track1Btn, track2Btn));
+  track2Btn.addEventListener('click', ()=> setTrack('img/cancion2.mp3','Si Me Preguntaran','Ryan Castro', track2Btn, track1Btn));
+</script>
+</body>
+</html>
