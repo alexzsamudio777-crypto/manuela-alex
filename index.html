@@ -187,6 +187,10 @@
     .tcard img{height:180px;}
     section{padding:60px 16px;}
   }
+  .burst-heart{
+    position:fixed; top:50%; left:50%; pointer-events:none; z-index:9999;
+    opacity:1; transition: transform 1.5s cubic-bezier(.2,.8,.2,1), opacity 1.5s ease;
+  }
 </style>
 </head>
 <body>
@@ -259,7 +263,7 @@
   </div>
 </section>
 
-<footer>HECHO CON <span>&#9829;</span> POR ALEX PARA MANUELA</footer>
+<footer>HECHO CON <span>&#9829;</span> POR ALEX PARA MANUELA<br><span id="visitCount" style="color:#28f5e0; font-size:11px;"></span></footer>
 
 <script>
   const heartsBox = document.getElementById('hearts');
@@ -370,7 +374,37 @@
   }
   track1Btn.addEventListener('click', ()=> setTrack('img/cancion1.mp3','Algo Que Se Quede','Grupo Niche', track1Btn, track2Btn));
   track2Btn.addEventListener('click', ()=> setTrack('img/cancion2.mp3','Si Me Preguntaran','Ryan Castro', track2Btn, track1Btn));
+
+  fetch('https://api.countapi.xyz/hit/manuela-alex-aniversario/visitas')
+    .then(r=>r.json())
+    .then(d=>{ document.getElementById('visitCount').textContent = 'Visitada '+d.value+' veces'; })
+    .catch(()=>{});
+
+  function burstHearts(){
+    const symbols = ['\u2665','\u2726','\u2764'];
+    for(let i=0;i<28;i++){
+      const el = document.createElement('div');
+      el.className='burst-heart';
+      el.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+      el.style.fontSize = (16+Math.random()*20)+'px';
+      el.style.color = Math.random()>0.5 ? '#ff2e9a' : '#28f5e0';
+      document.body.appendChild(el);
+      const angle = Math.random()*Math.PI*2;
+      const dist = 120+Math.random()*260;
+      const dx = Math.cos(angle)*dist;
+      const dy = Math.sin(angle)*dist;
+      requestAnimationFrame(()=>{
+        el.style.transform = 'translate('+dx+'px,'+dy+'px) rotate('+(Math.random()*360)+'deg)';
+        el.style.opacity = '0';
+      });
+      setTimeout(()=> el.remove(), 1600);
+    }
+  }
+  window.addEventListener('load', ()=> setTimeout(burstHearts, 400));
 </script>
 </body>
 </html>
+
+
+
 
