@@ -401,10 +401,15 @@
       setTimeout(()=> el.remove(), 1600);
     }
   }
-  window.addEventListener('load', ()=> setTimeout(burstHearts, 400));
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', ()=> setTimeout(burstHearts, 300));
+  } else {
+    setTimeout(burstHearts, 300);
+  }
 </script>
 </body>
 </html>
+
 
 
 
