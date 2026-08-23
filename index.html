@@ -375,10 +375,11 @@
   track1Btn.addEventListener('click', ()=> setTrack('img/cancion1.mp3','Algo Que Se Quede','Grupo Niche', track1Btn, track2Btn));
   track2Btn.addEventListener('click', ()=> setTrack('img/cancion2.mp3','Si Me Preguntaran','Ryan Castro', track2Btn, track1Btn));
 
-  fetch('https://api.countapi.xyz/hit/manuela-alex-aniversario/visitas')
-    .then(r=>r.json())
-    .then(d=>{ document.getElementById('visitCount').textContent = 'Visitada '+d.value+' veces'; })
-    .catch(()=>{});
+  try{
+    let n = parseInt(localStorage.getItem('visitasManuelaAlex')||'0',10) + 1;
+    localStorage.setItem('visitasManuelaAlex', n);
+    document.getElementById('visitCount').textContent = 'Visitada '+n+' veces en este dispositivo';
+  }catch(e){}
 
   function burstHearts(){
     const symbols = ['\u2665','\u2726','\u2764'];
@@ -404,6 +405,7 @@
 </script>
 </body>
 </html>
+
 
 
 
