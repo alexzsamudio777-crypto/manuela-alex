@@ -172,8 +172,19 @@
   .trackbtn{padding:7px 12px;border-radius:20px;border:1px solid #28f5e0;background:transparent;color:#fff;cursor:pointer;font-size:11px;}
   .trackbtn.on{background:rgba(255,46,154,.15);border-color:#ff2e9a;}
 
+  .newbadge{
+    display:inline-block; margin-bottom:14px; padding:5px 14px; border-radius:20px;
+    background:rgba(40,245,224,.15); border:1px solid var(--cyan); color:var(--cyan);
+    font-size:11px; letter-spacing:2px; font-weight:700;
+  }
+
   footer{text-align:center; padding:60px 20px 90px; color:#7a6f99; font-size:12px; letter-spacing:2px;}
   footer span{color:var(--pink);}
+
+  .burst-heart{
+    position:fixed; top:50%; left:50%; pointer-events:none; z-index:9999;
+    opacity:1; transition: transform 1.5s cubic-bezier(.2,.8,.2,1), opacity 1.5s ease;
+  }
 
   @media(max-width:520px){
     .hero{padding:26px 16px;}
@@ -186,10 +197,6 @@
     .tcard{grid-template-columns:1fr;}
     .tcard img{height:180px;}
     section{padding:60px 16px;}
-  }
-  .burst-heart{
-    position:fixed; top:50%; left:50%; pointer-events:none; z-index:9999;
-    opacity:1; transition: transform 1.5s cubic-bezier(.2,.8,.2,1), opacity 1.5s ease;
   }
 </style>
 </head>
@@ -263,6 +270,27 @@
   </div>
 </section>
 
+<section id="video2">
+  <span class="newbadge">NUEVO</span>
+  <h2 class="stitle">Nuevos momentos</h2>
+  <div class="sline"></div>
+  <div style="max-width:420px; margin:0 auto; border-radius:24px; overflow:hidden; border:2px solid rgba(40,245,224,.4); box-shadow:0 0 40px rgba(40,245,224,.2);">
+    <video src="img/mi%20amorvideo.mp4" controls playsinline style="width:100%; display:block; background:#000;"></video>
+  </div>
+</section>
+
+<section id="galeria2">
+  <h2 class="stitle">Mas recuerdos</h2>
+  <div class="sline"></div>
+  <div class="slider-wrap">
+    <div class="slider" id="slider2">
+      <button class="navbtn prev" id="prevBtn2">&#10094;</button>
+      <button class="navbtn next" id="nextBtn2">&#10095;</button>
+    </div>
+    <div class="dots" id="dots2"></div>
+  </div>
+</section>
+
 <footer>HECHO CON <span>&#9829;</span> POR ALEX PARA MANUELA<br><span id="visitCount" style="color:#28f5e0; font-size:11px;"></span></footer>
 
 <script>
@@ -303,7 +331,53 @@
   }, {threshold:.2});
   cards.forEach(c=>io.observe(c));
 
-  const fotos = [
+  function initSlider(fotos, sliderId, dotsId, prevId, nextId){
+    const sliderBox = document.getElementById(sliderId);
+    const dotsBox = document.getElementById(dotsId);
+    const prevBtn = document.getElementById(prevId);
+    const nextBtn = document.getElementById(nextId);
+
+    fotos.forEach((src,i)=>{
+      const slide = document.createElement('div');
+      slide.className = 'slide'+(i===0?' active':'');
+      slide.innerHTML = '<img class="bg" src="'+src+'" alt=""><img class="fg" src="'+src+'" alt="Recuerdo '+(i+1)+'">';
+      sliderBox.insertBefore(slide, prevBtn);
+      const d = document.createElement('button');
+      d.className='dot'+(i===0?' active':'');
+      d.addEventListener('click', ()=> goTo(i));
+      dotsBox.appendChild(d);
+    });
+
+    let idx=0;
+    const slides = sliderBox.querySelectorAll('.slide');
+    const dots = dotsBox.querySelectorAll('.dot');
+    let timer;
+
+    function goTo(n){
+      slides[idx].classList.remove('active');
+      dots[idx].classList.remove('active');
+      idx = (n+slides.length)%slides.length;
+      slides[idx].classList.add('active');
+      dots[idx].classList.add('active');
+    }
+    function restartTimer(){
+      clearInterval(timer);
+      timer = setInterval(()=> goTo(idx+1), 3800);
+    }
+    prevBtn.addEventListener('click', ()=>{ goTo(idx-1); restartTimer(); });
+    nextBtn.addEventListener('click', ()=>{ goTo(idx+1); restartTimer(); });
+
+    let touchX=0;
+    sliderBox.addEventListener('touchstart', e=>{ touchX = e.touches[0].clientX; }, {passive:true});
+    sliderBox.addEventListener('touchend', e=>{
+      const dx = e.changedTouches[0].clientX - touchX;
+      if(Math.abs(dx) > 40){ goTo(dx < 0 ? idx+1 : idx-1); restartTimer(); }
+    }, {passive:true});
+
+    restartTimer();
+  }
+
+  const fotos1 = [
     'img/CON%20ESTRELLITA%201.webp','img/CON%20ESTRELLITA%202.webp','img/CON%20ESTRELLITA.webp',
     'img/EN%20TU%20PIEL.webp','img/FAMILIA%201.webp','img/FAMILIA.webp','img/FATO%203.webp',
     'img/FOTO%201.webp','img/FOTO%2010.webp','img/FOTO%2011.webp','img/FOTO%2012.webp',
@@ -311,49 +385,23 @@
     'img/FOTO%207.webp','img/FOTO%208.webp','img/FOTO%209.webp','img/MI%20MIMO%201.webp',
     'img/MI%20MIMO%202.webp','img/NUESTRA%20ESTRELLITA.webp','img/TU%20MIMO.webp'
   ];
-  const sliderBox = document.getElementById('slider');
-  const dotsBox = document.getElementById('dots');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
+  initSlider(fotos1, 'slider', 'dots', 'prevBtn', 'nextBtn');
 
-  fotos.forEach((src,i)=>{
-    const slide = document.createElement('div');
-    slide.className = 'slide'+(i===0?' active':'');
-    slide.innerHTML = '<img class="bg" src="'+src+'" alt=""><img class="fg" src="'+src+'" alt="Recuerdo '+(i+1)+'">';
-    sliderBox.insertBefore(slide, prevBtn);
-    const d = document.createElement('button');
-    d.className='dot'+(i===0?' active':'');
-    d.addEventListener('click', ()=> goTo(i));
-    dotsBox.appendChild(d);
-  });
-
-  let idx=0;
-  const slides = sliderBox.querySelectorAll('.slide');
-  const dots = dotsBox.querySelectorAll('.dot');
-  let timer;
-
-  function goTo(n){
-    slides[idx].classList.remove('active');
-    dots[idx].classList.remove('active');
-    idx = (n+slides.length)%slides.length;
-    slides[idx].classList.add('active');
-    dots[idx].classList.add('active');
-  }
-  function restartTimer(){
-    clearInterval(timer);
-    timer = setInterval(()=> goTo(idx+1), 3800);
-  }
-  prevBtn.addEventListener('click', ()=>{ goTo(idx-1); restartTimer(); });
-  nextBtn.addEventListener('click', ()=>{ goTo(idx+1); restartTimer(); });
-
-  let touchX=0;
-  sliderBox.addEventListener('touchstart', e=>{ touchX = e.touches[0].clientX; }, {passive:true});
-  sliderBox.addEventListener('touchend', e=>{
-    const dx = e.changedTouches[0].clientX - touchX;
-    if(Math.abs(dx) > 40){ goTo(dx < 0 ? idx+1 : idx-1); restartTimer(); }
-  }, {passive:true});
-
-  restartTimer();
+  const fotos2 = [
+    'img/IMG-20260831-WA0032.jpg',
+    'img/motion_photo_103894343051764961.jpg','img/motion_photo_1120853149090751683.jpg',
+    'img/motion_photo_1238747941965625335.jpg','img/motion_photo_1549668502139459518.jpg',
+    'img/motion_photo_1683334298475873232.jpg','img/motion_photo_1707079875662787590.jpg',
+    'img/motion_photo_2082299629117771404.jpg','img/motion_photo_2499772291074988993.jpg',
+    'img/motion_photo_3182785420361695234.jpg','img/motion_photo_3280292480786446058.jpg',
+    'img/motion_photo_3534743502450874842.jpg','img/motion_photo_4037352234326229645.jpg',
+    'img/motion_photo_5362492498561649651.jpg','img/motion_photo_5395659192329773646.jpg',
+    'img/motion_photo_5438695710058420547.jpg','img/motion_photo_5496219643701765308.jpg',
+    'img/motion_photo_6004101252014480581.jpg','img/motion_photo_7075009016324676230.jpg',
+    'img/motion_photo_752544663372879880.jpg','img/motion_photo_7555425390449517621.jpg',
+    'img/motion_photo_8261222058771140430.jpg','img/motion_photo_8694737091419444057.jpg'
+  ];
+  initSlider(fotos2, 'slider2', 'dots2', 'prevBtn2', 'nextBtn2');
 
   const audio = document.getElementById('audio');
   const playBtn = document.getElementById('playBtn');
@@ -409,9 +457,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-
