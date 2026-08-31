@@ -156,21 +156,43 @@
   .dot{width:7px; height:7px; border-radius:50%; background:#3c3555; transition:.3s; border:none; cursor:pointer; padding:0;}
   .dot.active{background:var(--pink); box-shadow:0 0 10px var(--pink); width:20px; border-radius:5px;}
 
-  .music{
-    display:flex; align-items:center; gap:16px; justify-content:center;
-    background:rgba(255,255,255,.04); border:1px solid rgba(255,209,102,.4);
-    border-radius:20px; padding:14px 20px; max-width:420px; margin:0 auto;
+  .music-card{
+    width:100%; max-width:440px; margin:0 auto;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,209,102,.5);
+    border-radius:26px; padding:22px 24px;
+    box-shadow:0 0 50px rgba(255,46,154,.15);
   }
+  .music-label{
+    font-size:11px; letter-spacing:3px; color:var(--gold); font-weight:700; margin-bottom:14px;
+  }
+  .music-row{display:flex; align-items:center; gap:18px;}
+  .disc{
+    width:64px; height:64px; border-radius:50%; flex-shrink:0;
+    background:conic-gradient(var(--pink),var(--violet),var(--cyan),var(--pink));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 24px rgba(255,46,154,.4);
+    animation:spin 6s linear infinite;
+    animation-play-state:paused;
+  }
+  .disc.spinning{animation-play-state:running;}
+  .disc::after{content:""; width:22px; height:22px; border-radius:50%; background:var(--bg);}
+  @keyframes spin{from{transform:rotate(0);}to{transform:rotate(360deg);}}
   .playbtn{
-    width:48px; height:48px; border-radius:50%; border:none; cursor:pointer;
+    width:52px; height:52px; border-radius:50%; border:none; cursor:pointer;
     background:linear-gradient(135deg,var(--pink),var(--violet));
-    color:#fff; font-size:18px; box-shadow:0 0 18px rgba(255,46,154,.5);
+    color:#fff; font-size:20px; box-shadow:0 0 18px rgba(255,46,154,.5);
     flex-shrink:0;
   }
-  .music p{font-size:13px; color:#c9c2e0;}
-  .music b{display:block; color:#fff; font-size:14px;}
-  .trackbtn{padding:7px 12px;border-radius:20px;border:1px solid #28f5e0;background:transparent;color:#fff;cursor:pointer;font-size:11px;}
-  .trackbtn.on{background:rgba(255,46,154,.15);border-color:#ff2e9a;}
+  .track-info{text-align:left; flex:1; min-width:0;}
+  .track-info b{display:block; color:#fff; font-size:17px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .track-info span{font-size:13px; color:#c9c2e0;}
+  .trackbtn{margin-top:16px; width:100%; display:flex; gap:8px;}
+  .trackbtn button{
+    flex:1; padding:9px 10px;border-radius:14px;border:1px solid #28f5e0;
+    background:transparent;color:#fff;cursor:pointer;font-size:12px;
+  }
+  .trackbtn button.on{background:rgba(255,46,154,.18);border-color:#ff2e9a; font-weight:700;}
 
   .newbadge{
     display:inline-block; margin-bottom:14px; padding:5px 14px; border-radius:20px;
@@ -193,7 +215,7 @@
     .cbox{padding:10px 12px; min-width:64px;}
     .cbox b{font-size:20px;}
     .mini-phrase{font-size:14px; margin-top:20px;}
-    .music{margin-top:18px !important; padding:12px 16px;}
+    .music-card{margin-top:20px !important; padding:18px;}
     .tcard{grid-template-columns:1fr;}
     .tcard img{height:180px;}
     section{padding:60px 16px;}
@@ -213,17 +235,22 @@
 
   <p class="mini-phrase">"<span class="hl">Manuela</span>, contigo hasta lo m&aacute;s simple se siente especial."</p>
 
-  <div class="music" style="flex-direction:column; gap:12px; margin-top:22px;">
-    <div style="display:flex; gap:14px; align-items:center;">
+  <div class="music-card" style="margin-top:26px;">
+    <div class="music-label">&#9835; NUESTRA CANCI&Oacute;N</div>
+    <div class="music-row">
+      <div class="disc" id="disc"></div>
       <button class="playbtn" id="playBtn">&#9658;</button>
-      <p id="trackLabel"><b>Algo Que Se Quede</b>Grupo Niche</p>
+      <div class="track-info">
+        <b id="trackName">Algo Que Se Quede</b>
+        <span id="trackArtist">Grupo Niche</span>
+      </div>
     </div>
-    <div style="display:flex; gap:10px;">
-      <button id="track1Btn" class="trackbtn on">Algo Que Se Quede</button>
-      <button id="track2Btn" class="trackbtn">Si Me Preguntaran</button>
+    <div class="trackbtn">
+      <button id="track1Btn" class="on">Algo Que Se Quede</button>
+      <button id="track2Btn">Si Me Preguntaran</button>
     </div>
   </div>
-  <audio id="audio" src="img/cancion1.mp3" loop></audio>
+  <audio id="audio" src="img/cancion1.mp3"></audio>
 </section>
 
 <section id="timeline">
@@ -405,23 +432,75 @@
 
   const audio = document.getElementById('audio');
   const playBtn = document.getElementById('playBtn');
-  const trackLabel = document.getElementById('trackLabel');
+  const disc = document.getElementById('disc');
+  const trackName = document.getElementById('trackName');
+  const trackArtist = document.getElementById('trackArtist');
   const track1Btn = document.getElementById('track1Btn');
   const track2Btn = document.getElementById('track2Btn');
-  playBtn.addEventListener('click', ()=>{
-    if(audio.paused){ audio.play(); playBtn.textContent='\u275a\u275a'; }
-    else { audio.pause(); playBtn.textContent='\u25b6'; }
-  });
-  function setTrack(src, label, artist, activeBtn, otherBtn){
-    const wasPlaying = !audio.paused;
-    audio.src = src;
-    trackLabel.innerHTML = '<b>'+label+'</b>'+artist;
-    activeBtn.classList.add('on');
-    otherBtn.classList.remove('on');
-    if(wasPlaying){ audio.play(); playBtn.textContent='\u275a\u275a'; }
+
+  const TRACKS = {
+    1: {src:'img/cancion1.mp3', name:'Algo Que Se Quede', artist:'Grupo Niche', btn:track1Btn, other:track2Btn},
+    2: {src:'img/cancion2.mp3', name:'Si Me Preguntaran', artist:'Ryan Castro', btn:track2Btn, other:track1Btn}
+  };
+  let currentTrack = 1;
+  let userPaused = false;
+
+  function loadTrack(n, autoplay){
+    const t = TRACKS[n];
+    currentTrack = n;
+    audio.src = t.src;
+    trackName.textContent = t.name;
+    trackArtist.textContent = t.artist;
+    t.btn.classList.add('on');
+    t.other.classList.remove('on');
+    if(autoplay){
+      audio.play().then(()=>{
+        playBtn.textContent='\u275a\u275a';
+        disc.classList.add('spinning');
+      }).catch(()=>{
+        playBtn.textContent='\u25b6';
+        disc.classList.remove('spinning');
+      });
+    }
   }
-  track1Btn.addEventListener('click', ()=> setTrack('img/cancion1.mp3','Algo Que Se Quede','Grupo Niche', track1Btn, track2Btn));
-  track2Btn.addEventListener('click', ()=> setTrack('img/cancion2.mp3','Si Me Preguntaran','Ryan Castro', track2Btn, track1Btn));
+
+  playBtn.addEventListener('click', ()=>{
+    if(audio.paused){
+      userPaused = false;
+      audio.play();
+      playBtn.textContent='\u275a\u275a';
+      disc.classList.add('spinning');
+    } else {
+      userPaused = true;
+      audio.pause();
+      playBtn.textContent='\u25b6';
+      disc.classList.remove('spinning');
+    }
+  });
+
+  track1Btn.addEventListener('click', ()=> loadTrack(1, !userPaused));
+  track2Btn.addEventListener('click', ()=> loadTrack(2, !userPaused));
+
+  audio.addEventListener('ended', ()=>{
+    if(!userPaused){
+      loadTrack(currentTrack===1 ? 2 : 1, true);
+    }
+  });
+
+  // Al cargar: elige cancion al azar e intenta reproducir sola.
+  // Los navegadores bloquean el autoplay con sonido hasta que la persona
+  // toque la pantalla; si falla, arranca apenas haya un primer toque.
+  const startTrack = Math.random() < 0.5 ? 1 : 2;
+  loadTrack(startTrack, true);
+  document.body.addEventListener('click', function tryStart(){
+    if(audio.paused && !userPaused){
+      audio.play().then(()=>{
+        playBtn.textContent='\u275a\u275a';
+        disc.classList.add('spinning');
+      }).catch(()=>{});
+    }
+    document.body.removeEventListener('click', tryStart);
+  }, {once:true});
 
   try{
     let n = parseInt(localStorage.getItem('visitasManuelaAlex')||'0',10) + 1;
