@@ -492,15 +492,17 @@
   // toque la pantalla; si falla, arranca apenas haya un primer toque.
   const startTrack = Math.random() < 0.5 ? 1 : 2;
   loadTrack(startTrack, true);
-  document.body.addEventListener('click', function tryStart(){
+  function tryStart(){
     if(audio.paused && !userPaused){
       audio.play().then(()=>{
         playBtn.textContent='\u275a\u275a';
         disc.classList.add('spinning');
       }).catch(()=>{});
     }
-    document.body.removeEventListener('click', tryStart);
-  }, {once:true});
+  }
+  ['click','touchstart','touchmove','scroll','keydown'].forEach(evt=>{
+    window.addEventListener(evt, tryStart, {once:true, passive:true});
+  });
 
   try{
     let n = parseInt(localStorage.getItem('visitasManuelaAlex')||'0',10) + 1;
@@ -536,3 +538,4 @@
 </script>
 </body>
 </html>
+
