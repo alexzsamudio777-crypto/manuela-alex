@@ -59,6 +59,31 @@
     transition:transform 1s ease, opacity 1s ease; opacity:1;
   }
 
+  /* Nav fijo */
+  .navdots{
+    position:fixed; top:16px; right:16px; z-index:100;
+    display:flex; gap:8px;
+    background:rgba(7,5,15,.6); backdrop-filter:blur(6px);
+    border:1px solid rgba(255,46,154,.3); border-radius:20px;
+    padding:8px 10px;
+  }
+  .navdots a{
+    font-size:10px; letter-spacing:1px; color:#c9c2e0; text-decoration:none;
+    padding:4px 8px; border-radius:12px; transition:.2s;
+  }
+  .navdots a:hover, .navdots a:active{background:rgba(255,46,154,.2); color:#fff;}
+
+  /* Boton subir */
+  .toTop{
+    position:fixed; bottom:22px; right:18px; z-index:100;
+    width:46px; height:46px; border-radius:50%; border:none; cursor:pointer;
+    background:linear-gradient(135deg,var(--pink),var(--violet));
+    color:#fff; font-size:18px; box-shadow:0 0 18px rgba(255,46,154,.5);
+    opacity:0; pointer-events:none; transition:opacity .3s ease, transform .3s ease;
+    transform:translateY(10px);
+  }
+  .toTop.show{opacity:1; pointer-events:auto; transform:translateY(0);}
+
   section{position:relative; z-index:2; padding:80px 20px; max-width:900px; margin:0 auto;}
 
   .reveal{opacity:0; transform:translateY(36px); transition:opacity .9s ease, transform .9s ease;}
@@ -68,6 +93,13 @@
     min-height:100vh; display:flex; flex-direction:column;
     align-items:center; justify-content:center; text-align:center;
     padding:40px 20px;
+    position:relative;
+  }
+  .hero-bg{
+    position:absolute; inset:0; z-index:-1;
+    background-image:linear-gradient(180deg, rgba(7,5,15,.55), rgba(7,5,15,.92) 75%, var(--bg) 100%), url('img/FOTO%202.webp');
+    background-size:cover; background-position:center 30%;
+    filter:saturate(1.1);
   }
   .eyebrow{
     letter-spacing:6px; font-size:12px; color:var(--cyan);
@@ -143,6 +175,12 @@
   .tcard h3{color:var(--pink); text-shadow:0 0 8px rgba(255,46,154,.5); font-size:20px; margin-bottom:6px;}
   .tcard p{color:#c9c2e0; font-size:14px;}
 
+  .section-gap{height:20px; display:flex; align-items:center; justify-content:center;}
+  .section-gap span{
+    width:6px; height:6px; border-radius:50%; background:var(--pink);
+    margin:0 6px; box-shadow:0 0 8px var(--pink); opacity:.6;
+  }
+
   .phrase-wrap{text-align:center; padding:90px 20px;}
   .phrase{
     font-size:clamp(22px,5vw,42px); font-style:italic; font-weight:700;
@@ -180,6 +218,11 @@
     display:flex; align-items:center; justify-content:center;
   }
   .navbtn.prev{left:10px;} .navbtn.next{right:10px;}
+  .slidecount{
+    position:absolute; top:12px; right:12px; z-index:3;
+    background:rgba(0,0,0,.5); color:#fff; font-size:11px; font-weight:700;
+    padding:4px 10px; border-radius:12px; letter-spacing:1px;
+  }
   .dots{display:flex; justify-content:center; gap:7px; margin-top:16px; flex-wrap:wrap;}
   .dot{width:7px; height:7px; border-radius:50%; background:#3c3555; transition:.3s; border:none; cursor:pointer; padding:0;}
   .dot.active{background:var(--pink); box-shadow:0 0 10px var(--pink); width:20px; border-radius:5px;}
@@ -247,6 +290,8 @@
   }
 
   @media(max-width:520px){
+    .navdots{top:10px; right:10px; padding:6px 8px; gap:4px;}
+    .navdots a{font-size:9px; padding:4px 6px;}
     .hero{padding:26px 16px;}
     .subtitle{font-size:14px;}
     .countdown{margin-top:22px; gap:8px;}
@@ -265,7 +310,15 @@
 <div class="stars" id="stars"></div>
 <div class="hearts" id="hearts"></div>
 
-<section class="hero">
+<nav class="navdots">
+  <a href="#top">Inicio</a>
+  <a href="#galeria">Recuerdos</a>
+  <a href="#video2">Nuevo</a>
+</nav>
+<button class="toTop" id="toTop" title="Subir">&#8593;</button>
+
+<section class="hero" id="top">
+  <div class="hero-bg"></div>
   <div class="eyebrow">ANIVERSARIO</div>
   <h1 class="names">Manuela <span class="amp">&amp;</span> Alex</h1>
   <p class="subtitle">Desde el 22 de mayo, cada mes contigo se ha sentido como el primero.</p>
@@ -311,6 +364,8 @@
   </div>
 </section>
 
+<div class="section-gap"><span></span><span></span><span></span></div>
+
 <section class="phrase-wrap">
   <p class="phrase reveal">"<span class="hl">Manuela</span>, contigo hasta lo m&aacute;s simple se siente especial."</p>
   <div class="signoff reveal">&mdash; CON TODO MI CORAZ&Oacute;N, ALEX</div>
@@ -320,7 +375,7 @@
   <h2 class="stitle reveal">Un momento nuestro</h2>
   <div class="sline reveal"></div>
   <div class="video-wrap reveal" style="border:2px solid rgba(255,46,154,.4);">
-    <video src="img/video1.mp4" controls playsinline style="width:100%; display:block; background:#000;"></video>
+    <video src="img/video1.mp4" controls playsinline preload="metadata" style="width:100%; display:block; background:#000;"></video>
   </div>
 </section>
 
@@ -329,6 +384,7 @@
   <div class="sline reveal"></div>
   <div class="slider-wrap reveal">
     <div class="slider" id="slider">
+      <div class="slidecount" id="count1"></div>
       <button class="navbtn prev" id="prevBtn">&#10094;</button>
       <button class="navbtn next" id="nextBtn">&#10095;</button>
     </div>
@@ -336,15 +392,17 @@
   </div>
 </section>
 
+<div class="section-gap"><span></span><span></span><span></span></div>
+
 <section id="video2">
   <span class="newbadge reveal">NUEVO</span>
   <h2 class="stitle reveal">Nuevos momentos</h2>
   <div class="sline reveal"></div>
   <div class="video-wrap reveal" style="border:2px solid rgba(40,245,224,.4); margin-bottom:20px;">
-    <video src="img/mi%20amorvideo.mp4" controls playsinline style="width:100%; display:block; background:#000;"></video>
+    <video src="img/mi%20amorvideo.mp4" controls playsinline preload="metadata" style="width:100%; display:block; background:#000;"></video>
   </div>
   <div class="video-wrap reveal" style="border:2px solid rgba(255,46,154,.4);">
-    <video src="img/video_2026-08-31_11-01-59.mp4" controls playsinline style="width:100%; display:block; background:#000;"></video>
+    <video src="img/video_2026-08-31_11-01-59.mp4" controls playsinline preload="metadata" style="width:100%; display:block; background:#000;"></video>
   </div>
 </section>
 
@@ -353,6 +411,7 @@
   <div class="sline reveal"></div>
   <div class="slider-wrap reveal">
     <div class="slider" id="slider2">
+      <div class="slidecount" id="count2"></div>
       <button class="navbtn prev" id="prevBtn2">&#10094;</button>
       <button class="navbtn next" id="nextBtn2">&#10095;</button>
     </div>
@@ -389,7 +448,6 @@
     heartsBox.appendChild(h);
   }
 
-  // Rastro de destellos al tocar/mover
   let lastSparkle = 0;
   function spawnSparkle(x, y){
     const now = Date.now();
@@ -414,6 +472,13 @@
   window.addEventListener('mousemove', e=>{
     spawnSparkle(e.clientX, e.clientY);
   });
+
+  const toTopBtn = document.getElementById('toTop');
+  window.addEventListener('scroll', ()=>{
+    if(window.scrollY > 500) toTopBtn.classList.add('show');
+    else toTopBtn.classList.remove('show');
+  }, {passive:true});
+  toTopBtn.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
 
   const inicio = new Date('2026-05-22T00:00:00');
   const el = document.getElementById('countdown');
@@ -440,11 +505,12 @@
   }, {threshold:.2});
   cards.forEach(c=>io.observe(c));
 
-  function initSlider(fotos, sliderId, dotsId, prevId, nextId){
+  function initSlider(fotos, sliderId, dotsId, prevId, nextId, countId){
     const sliderBox = document.getElementById(sliderId);
     const dotsBox = document.getElementById(dotsId);
     const prevBtn = document.getElementById(prevId);
     const nextBtn = document.getElementById(nextId);
+    const countEl = document.getElementById(countId);
 
     fotos.forEach((src,i)=>{
       const slide = document.createElement('div');
@@ -462,12 +528,18 @@
     const dots = dotsBox.querySelectorAll('.dot');
     let timer;
 
+    function updateCount(){
+      if(countEl) countEl.textContent = (idx+1)+' / '+slides.length;
+    }
+    updateCount();
+
     function goTo(n){
       slides[idx].classList.remove('active');
       dots[idx].classList.remove('active');
       idx = (n+slides.length)%slides.length;
       slides[idx].classList.add('active');
       dots[idx].classList.add('active');
+      updateCount();
     }
     function restartTimer(){
       clearInterval(timer);
@@ -494,7 +566,7 @@
     'img/FOTO%207.webp','img/FOTO%208.webp','img/FOTO%209.webp','img/MI%20MIMO%201.webp',
     'img/MI%20MIMO%202.webp','img/NUESTRA%20ESTRELLITA.webp','img/TU%20MIMO.webp'
   ];
-  initSlider(fotos1, 'slider', 'dots', 'prevBtn', 'nextBtn');
+  initSlider(fotos1, 'slider', 'dots', 'prevBtn', 'nextBtn', 'count1');
 
   const fotos2 = [
     'img/IMG-20260831-WA0032.jpg',
@@ -510,7 +582,7 @@
     'img/motion_photo_752544663372879880.jpg','img/motion_photo_7555425390449517621.jpg',
     'img/motion_photo_8261222058771140430.jpg','img/motion_photo_8694737091419444057.jpg'
   ];
-  initSlider(fotos2, 'slider2', 'dots2', 'prevBtn2', 'nextBtn2');
+  initSlider(fotos2, 'slider2', 'dots2', 'prevBtn2', 'nextBtn2', 'count2');
 
   const audio = document.getElementById('audio');
   const playBtn = document.getElementById('playBtn');
@@ -617,4 +689,3 @@
 </script>
 </body>
 </html>
-
