@@ -149,7 +149,7 @@
   .quote{font-family:var(--display); font-style:italic; font-weight:500; font-size:clamp(22px,4.4vw,36px); max-width:660px; margin:0 auto; line-height:1.55; color:#fff;}
   .quote-sign{margin-top:22px; font-size:12.5px; color:var(--gold);}
 
-  .month-tabs{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:28px;}
+  .month-tabs{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:20px;}
   .month-tab{
     padding:9px 18px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.04);
     color:var(--muted); font-size:13px; font-weight:600; cursor:pointer; transition:.2s;
@@ -157,18 +157,28 @@
   .month-tab.active{background:linear-gradient(135deg,var(--pink),var(--violet)); border-color:transparent; color:#fff;}
   .month-tab:hover:not(.active){background:rgba(255,255,255,.08); color:#fff;}
 
-  .photo-grid{
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:8px;
-    animation:gridIn .4s ease;
+  .surprise-btn{
+    display:flex; align-items:center; gap:8px; margin:0 auto 28px; padding:10px 20px; border-radius:999px;
+    border:1px solid rgba(255,207,107,.4); background:rgba(255,207,107,.07); color:var(--gold);
+    font-size:13px; font-weight:600; cursor:pointer; transition:.2s;
   }
-  @keyframes gridIn{from{opacity:0;}to{opacity:1;}}
+  .surprise-btn:hover{background:rgba(255,207,107,.16);}
+
+  .photo-grid{ column-count:3; column-gap:8px; }
+  @media(min-width:600px){ .photo-grid{ column-count:4; } }
   .grid-thumb{
-    aspect-ratio:1; border-radius:12px; overflow:hidden; border:1px solid var(--line);
+    display:block; width:100%; margin:0 0 8px; break-inside:avoid;
+    border-radius:12px; overflow:hidden; border:1px solid var(--line);
     padding:0; cursor:pointer; background:#000;
+    opacity:0; animation:thumbIn .5s ease forwards;
   }
-  .grid-thumb img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .3s ease;}
-  .grid-thumb:hover img{transform:scale(1.08);}
-  .grid-empty{grid-column:1/-1; text-align:center; color:var(--muted); font-size:14px; padding:24px 0;}
+  @keyframes thumbIn{from{opacity:0; transform:translateY(10px);}to{opacity:1; transform:translateY(0);}}
+  .grid-thumb img{width:100%; height:auto; display:block; transition:transform .3s ease;}
+  .grid-thumb:hover img{transform:scale(1.05);}
+  .grid-empty{column-span:all; text-align:center; color:var(--muted); font-size:14px; padding:24px 0;}
+
+  .scroll-progress{position:fixed; top:0; left:0; height:3px; width:0%; z-index:200;
+    background:linear-gradient(90deg,var(--pink),var(--violet),var(--cyan)); transition:width .1s linear;}
 
   .lightbox{
     position:fixed; inset:0; z-index:1000; background:rgba(5,3,10,.94);
@@ -205,6 +215,8 @@
 </style>
 </head>
 <body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
 
 <div class="stars" id="stars"></div>
 <div class="hearts" id="hearts"></div>
@@ -293,12 +305,8 @@
     <p>Cada foto, un momento que quiero recordar.</p>
     <div class="rule"></div>
   </div>
-  <div class="month-tabs" id="monthTabs">
-    <button class="month-tab active" data-month="1">Mes 1</button>
-    <button class="month-tab" data-month="2">Mes 2</button>
-    <button class="month-tab" data-month="3">Mes 3</button>
-    <button class="month-tab" data-month="4">Mes 4</button>
-  </div>
+  <div class="month-tabs" id="monthTabs"></div>
+  <button class="surprise-btn" id="surpriseBtn">&#10024; Sorpr&eacute;ndeme</button>
   <div class="photo-grid" id="photoGrid"></div>
 </section>
 
@@ -436,9 +444,24 @@
   };
 
   const photoGrid = document.getElementById('photoGrid');
-  const monthTabs = document.querySelectorAll('.month-tab');
+  const monthTabsBox = document.getElementById('monthTabs');
+  const monthNames = {1:'Mes 1', 2:'Mes 2', 3:'Mes 3', 4:'Mes 4'};
   let currentMonth = 1;
   let currentIndex = 0;
+
+  Object.keys(galeria).forEach(m=>{
+    const tab = document.createElement('button');
+    tab.className = 'month-tab' + (parseInt(m,10)===currentMonth ? ' active' : '');
+    tab.dataset.month = m;
+    tab.textContent = monthNames[m] + ' (' + galeria[m].length + ')';
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.month-tab').forEach(t=> t.classList.remove('active'));
+      tab.classList.add('active');
+      currentMonth = parseInt(m, 10);
+      renderGrid(currentMonth);
+    });
+    monthTabsBox.appendChild(tab);
+  });
 
   function renderGrid(month){
     photoGrid.innerHTML = '';
@@ -450,22 +473,35 @@
     fotos.forEach((src,i)=>{
       const thumb = document.createElement('button');
       thumb.className = 'grid-thumb';
+      thumb.style.animationDelay = (Math.min(i,24) * 0.04) + 's';
       thumb.innerHTML = '<img src="'+src+'" alt="Recuerdo mes '+month+' #'+(i+1)+'" loading="lazy">';
       thumb.addEventListener('click', ()=> openLightbox(month, i));
       photoGrid.appendChild(thumb);
     });
   }
-
-  monthTabs.forEach(tab=>{
-    tab.addEventListener('click', ()=>{
-      monthTabs.forEach(t=> t.classList.remove('active'));
-      tab.classList.add('active');
-      currentMonth = parseInt(tab.dataset.month, 10);
-      renderGrid(currentMonth);
-    });
-  });
   renderGrid(currentMonth);
 
+  const surpriseBtn = document.getElementById('surpriseBtn');
+  surpriseBtn.addEventListener('click', ()=>{
+    const months = Object.keys(galeria).filter(m=> galeria[m].length > 0);
+    const m = parseInt(months[Math.floor(Math.random()*months.length)], 10);
+    const i = Math.floor(Math.random()*galeria[m].length);
+    if(m !== currentMonth){
+      document.querySelectorAll('.month-tab').forEach(t=>{
+        t.classList.toggle('active', parseInt(t.dataset.month,10)===m);
+      });
+      currentMonth = m;
+      renderGrid(m);
+    }
+    openLightbox(m, i);
+  });
+
+  const scrollProgress = document.getElementById('scrollProgress');
+  window.addEventListener('scroll', ()=>{
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    scrollProgress.style.width = pct + '%';
+  }, {passive:true});
   const lightbox = document.getElementById('lightbox');
   const lbImg = document.getElementById('lbImg');
   const lbCount = document.getElementById('lbCount');
@@ -602,6 +638,10 @@
 </script>
 </body>
 </html>
+
+
+
+
 
 
 
