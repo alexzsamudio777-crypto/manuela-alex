@@ -149,18 +149,38 @@
   .quote{font-family:var(--display); font-style:italic; font-weight:500; font-size:clamp(22px,4.4vw,36px); max-width:660px; margin:0 auto; line-height:1.55; color:#fff;}
   .quote-sign{margin-top:22px; font-size:12.5px; color:var(--gold);}
 
-  .slider-wrap{position:relative; width:100%; max-width:460px; margin:0 auto;}
-  .slider{position:relative; width:100%; aspect-ratio:4/5; border-radius:22px; overflow:hidden; border:1px solid var(--line); background:#000; touch-action:pan-y;}
-  .slide{position:absolute; inset:0; opacity:0; transition:opacity .9s ease;}
-  .slide.active{opacity:1;}
-  .slide .bg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:blur(25px) brightness(.55); transform:scale(1.2);}
-  .slide .fg{position:absolute; inset:0; width:100%; height:100%; object-fit:contain;}
-  .navbtn{position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:50%; border:none; cursor:pointer; background:rgba(0,0,0,.45); color:#fff; font-size:17px; z-index:3; display:flex; align-items:center; justify-content:center;}
-  .navbtn.prev{left:10px;} .navbtn.next{right:10px;}
-  .slidecount{position:absolute; top:12px; right:12px; z-index:3; background:rgba(0,0,0,.5); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:12px;}
-  .dots{display:flex; justify-content:center; gap:7px; margin-top:16px; flex-wrap:wrap;}
-  .dot{width:7px; height:7px; border-radius:50%; background:#3c3555; transition:.3s; border:none; cursor:pointer; padding:0;}
-  .dot.active{background:var(--pink); width:20px; border-radius:5px;}
+  .month-tabs{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:28px;}
+  .month-tab{
+    padding:9px 18px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.04);
+    color:var(--muted); font-size:13px; font-weight:600; cursor:pointer; transition:.2s;
+  }
+  .month-tab.active{background:linear-gradient(135deg,var(--pink),var(--violet)); border-color:transparent; color:#fff;}
+  .month-tab:hover:not(.active){background:rgba(255,255,255,.08); color:#fff;}
+
+  .photo-grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:8px;
+    animation:gridIn .4s ease;
+  }
+  @keyframes gridIn{from{opacity:0;}to{opacity:1;}}
+  .grid-thumb{
+    aspect-ratio:1; border-radius:12px; overflow:hidden; border:1px solid var(--line);
+    padding:0; cursor:pointer; background:#000;
+  }
+  .grid-thumb img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .3s ease;}
+  .grid-thumb:hover img{transform:scale(1.08);}
+  .grid-empty{grid-column:1/-1; text-align:center; color:var(--muted); font-size:14px; padding:24px 0;}
+
+  .lightbox{
+    position:fixed; inset:0; z-index:1000; background:rgba(5,3,10,.94);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity .25s ease;
+  }
+  .lightbox.show{opacity:1; pointer-events:auto;}
+  .lb-img{max-width:92vw; max-height:82vh; border-radius:14px; object-fit:contain;}
+  .lb-close{position:absolute; top:18px; right:18px; width:40px; height:40px; border-radius:50%; border:none; background:rgba(255,255,255,.1); color:#fff; font-size:22px; cursor:pointer;}
+  .lb-nav{position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; border:none; background:rgba(255,255,255,.1); color:#fff; font-size:19px; cursor:pointer;}
+  .lb-prev{left:14px;} .lb-next{right:14px;}
+  .lb-count{position:absolute; bottom:22px; left:50%; transform:translateX(-50%); background:rgba(255,255,255,.1); color:#fff; font-size:12px; padding:5px 14px; border-radius:12px;}
 
   .video-item{margin-bottom:34px; text-align:center;}
   .video-item:last-child{margin-bottom:0;}
@@ -257,6 +277,7 @@
       <div class="path-date">22 de septiembre de 2026 &mdash; hoy</div>
       <h3>4 meses juntos</h3>
       <p>Y quiero seguir sumando meses contigo, Manuela.</p>
+      <div class="path-photo"><img src="img/4%20MESES.png" alt="4 meses"></div>
     </div>
   </div>
 </section>
@@ -272,15 +293,22 @@
     <p>Cada foto, un momento que quiero recordar.</p>
     <div class="rule"></div>
   </div>
-  <div class="slider-wrap">
-    <div class="slider" id="slider">
-      <div class="slidecount" id="count1"></div>
-      <button class="navbtn prev" id="prevBtn">&#10094;</button>
-      <button class="navbtn next" id="nextBtn">&#10095;</button>
-    </div>
-    <div class="dots" id="dots"></div>
+  <div class="month-tabs" id="monthTabs">
+    <button class="month-tab active" data-month="1">Mes 1</button>
+    <button class="month-tab" data-month="2">Mes 2</button>
+    <button class="month-tab" data-month="3">Mes 3</button>
+    <button class="month-tab" data-month="4">Mes 4</button>
   </div>
+  <div class="photo-grid" id="photoGrid"></div>
 </section>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose">&times;</button>
+  <button class="lb-nav lb-prev" id="lbPrev">&#10094;</button>
+  <img class="lb-img" id="lbImg" src="" alt="">
+  <button class="lb-nav lb-next" id="lbNext">&#10095;</button>
+  <div class="lb-count" id="lbCount"></div>
+</div>
 
 <section id="momentos">
   <div class="section-head reveal">
@@ -366,136 +394,114 @@
   }, {threshold:.2});
   revealEls.forEach(el=> io.observe(el));
 
-  function initSlider(fotos, sliderId, dotsId, prevId, nextId, countId){
-    const sliderBox = document.getElementById(sliderId);
-    const dotsBox = document.getElementById(dotsId);
-    const prevBtn = document.getElementById(prevId);
-    const nextBtn = document.getElementById(nextId);
-    const countEl = document.getElementById(countId);
+  /* Fotos agrupadas por mes. Para agregar una foto nueva: sumala dentro del mes que corresponda, en el mismo formato */
+  const galeria = {
+    1: [
+      'img/FOTO%201.webp','img/FAMILIA.webp','img/FATO%203.webp','img/FOTO%202.webp',
+      'img/EN%20TU%20PIEL.webp','img/CON%20ESTRELLITA.webp','img/TU%20MIMO.webp','img/FOTO%204.webp',
+      'img/FAMILIA%201.webp','img/FOTO%205.webp','img/NUESTRA%20ESTRELLITA.webp'
+    ],
+    2: [
+      'img/CON%20ESTRELLITA%201.webp','img/FOTO%206.webp','img/MI%20MIMO%201.webp','img/CON%20ESTRELLITA%202.webp',
+      'img/MI%20MIMO%202.webp','img/FOTO%207.webp','img/FOTO%208.webp','img/FOTO%209.webp',
+      'img/FOTO%2010.webp','img/FOTO%2011.webp','img/FOTO%2012.webp'
+    ],
+    3: [
+      'img/IMG20260722143357.jpg'
+    ],
+    4: [
+      'img/IMG-20260831-WA0032.jpg',
+      'img/motion_photo_752544663372879880.jpg','img/motion_photo_5362492498561649651.jpg',
+      'img/motion_photo_1707079875662787590.jpg','img/motion_photo_103894343051764961.jpg',
+      'img/motion_photo_3534743502450874842.jpg','img/motion_photo_5438695710058420547.jpg',
+      'img/motion_photo_3280292480786446058.jpg','img/motion_photo_2499772291074988993.jpg',
+      'img/motion_photo_5395659192329773646.jpg','img/motion_photo_3182785420361695234.jpg',
+      'img/motion_photo_1238747941965625335.jpg','img/motion_photo_1120853149090751683.jpg',
+      'img/motion_photo_1549668502139459518.jpg','img/motion_photo_1683334298475873232.jpg',
+      'img/motion_photo_2082299629117771404.jpg','img/motion_photo_5496219643701765308.jpg',
+      'img/motion_photo_7555425390449517621.jpg','img/motion_photo_8261222058771140430.jpg',
+      'img/motion_photo_6004101252014480581.jpg','img/motion_photo_4037352234326229645.jpg',
+      'img/motion_photo_8694737091419444057.jpg','img/motion_photo_7075009016324676230.jpg',
+      'img/IMG20260905234522.jpg','img/IMG20260906135403.jpg','img/IMG20260906135423.jpg',
+      'img/IMG20260906135439.jpg','img/IMG20260906135441.jpg','img/IMG20260906135443.jpg',
+      'img/IMG20260906135444.jpg','img/IMG20260906144733.jpg','img/IMG20260906144735.jpg',
+      'img/IMG20260906144822.jpg','img/IMG20260906144823.jpg','img/IMG20260906144824.jpg',
+      'img/IMG-20260906-WA0008.jpg','img/IMG-20260906-WA0010.jpg','img/IMG-20260906-WA0004.jpg',
+      'img/IMG-20260906-WA0012.jpg','img/IMG-20260906-WA0006.jpg','img/IMG-20260906-WA0009.jpg',
+      'img/IMG-20260906-WA0011.jpg','img/IMG-20260914-WA0003.jpg','img/IMG-20260914-WA0004.jpg',
+      'img/IMG-20260914-WA0005.jpg','img/IMG-20260914-WA0006.jpg','img/IMG-20260914-WA0008.jpg',
+      'img/IMG-20260914-WA0009.jpg','img/IMG-20260914-WA0013.jpg','img/IMG-20260914-WA0014.jpg',
+      'img/IMG-20260914-WA0015.jpg','img/IMG-20260914-WA0016.jpg','img/IMG-20260916-WA0027.jpg'
+    ]
+  };
 
-    fotos.forEach((src,i)=>{
-      const slide = document.createElement('div');
-      slide.className = 'slide'+(i===0?' active':'');
-      slide.innerHTML = '<img class="bg" src="'+src+'" alt=""><img class="fg" src="'+src+'" alt="Recuerdo '+(i+1)+'">';
-      sliderBox.insertBefore(slide, prevBtn);
-      const d = document.createElement('button');
-      d.className='dot'+(i===0?' active':'');
-      d.addEventListener('click', ()=> goTo(i));
-      dotsBox.appendChild(d);
-    });
+  const photoGrid = document.getElementById('photoGrid');
+  const monthTabs = document.querySelectorAll('.month-tab');
+  let currentMonth = 1;
+  let currentIndex = 0;
 
-    let idx=0;
-    const slides = sliderBox.querySelectorAll('.slide');
-    const dots = dotsBox.querySelectorAll('.dot');
-    let timer;
-
-    function updateCount(){ if(countEl) countEl.textContent = (idx+1)+' / '+slides.length; }
-    updateCount();
-
-    function goTo(n){
-      slides[idx].classList.remove('active'); dots[idx].classList.remove('active');
-      idx = (n+slides.length)%slides.length;
-      slides[idx].classList.add('active'); dots[idx].classList.add('active');
-      updateCount();
+  function renderGrid(month){
+    photoGrid.innerHTML = '';
+    const fotos = galeria[month] || [];
+    if(fotos.length === 0){
+      photoGrid.innerHTML = '<div class="grid-empty">A&uacute;n no hay fotos de este mes.</div>';
+      return;
     }
-    function restartTimer(){ clearInterval(timer); timer = setInterval(()=> goTo(idx+1), 3800); }
-    prevBtn.addEventListener('click', ()=>{ goTo(idx-1); restartTimer(); });
-    nextBtn.addEventListener('click', ()=>{ goTo(idx+1); restartTimer(); });
-
-    let touchX=0;
-    sliderBox.addEventListener('touchstart', e=>{ touchX = e.touches[0].clientX; }, {passive:true});
-    sliderBox.addEventListener('touchend', e=>{
-      const dx = e.changedTouches[0].clientX - touchX;
-      if(Math.abs(dx) > 40){ goTo(dx < 0 ? idx+1 : idx-1); restartTimer(); }
-    }, {passive:true});
-
-    restartTimer();
+    fotos.forEach((src,i)=>{
+      const thumb = document.createElement('button');
+      thumb.className = 'grid-thumb';
+      thumb.innerHTML = '<img src="'+src+'" alt="Recuerdo mes '+month+' #'+(i+1)+'" loading="lazy">';
+      thumb.addEventListener('click', ()=> openLightbox(month, i));
+      photoGrid.appendChild(thumb);
+    });
   }
 
-  /* Para agregar fotos nuevas: solo suma el nombre del archivo aqui, en el mismo formato */
-  const fotos = [
-    'img/CON%20ESTRELLITA%201.webp',
-    'img/CON%20ESTRELLITA%202.webp',
-    'img/CON%20ESTRELLITA.webp',
-    'img/EN%20TU%20PIEL.webp',
-    'img/FAMILIA%201.webp',
-    'img/FAMILIA.webp',
-    'img/FATO%203.webp',
-    'img/FOTO%201.webp',
-    'img/FOTO%2010.webp',
-    'img/FOTO%2011.webp',
-    'img/FOTO%2012.webp',
-    'img/FOTO%202.webp',
-    'img/FOTO%204.webp',
-    'img/FOTO%205.webp',
-    'img/FOTO%206.webp',
-    'img/FOTO%207.webp',
-    'img/FOTO%208.webp',
-    'img/FOTO%209.webp',
-    'img/IMG20260722143357.jpg',
-    'img/IMG-20260831-WA0032.jpg',
-    'img/IMG20260905234522.jpg',
-    'img/IMG20260906135403.jpg',
-    'img/IMG20260906135423.jpg',
-    'img/IMG20260906135439.jpg',
-    'img/IMG20260906135441.jpg',
-    'img/IMG20260906135443.jpg',
-    'img/IMG20260906135444.jpg',
-    'img/IMG20260906144733.jpg',
-    'img/IMG20260906144735.jpg',
-    'img/IMG20260906144822.jpg',
-    'img/IMG20260906144823.jpg',
-    'img/IMG20260906144824.jpg',
-    'img/IMG-20260906-WA0004.jpg',
-    'img/IMG-20260906-WA0006.jpg',
-    'img/IMG-20260906-WA0008.jpg',
-    'img/IMG-20260906-WA0009.jpg',
-    'img/IMG-20260906-WA0010.jpg',
-    'img/IMG-20260906-WA0011.jpg',
-    'img/IMG-20260906-WA0012.jpg',
-    'img/IMG-20260914-WA0003.jpg',
-    'img/IMG-20260914-WA0004.jpg',
-    'img/IMG-20260914-WA0005.jpg',
-    'img/IMG-20260914-WA0006.jpg',
-    'img/IMG-20260914-WA0008.jpg',
-    'img/IMG-20260914-WA0009.jpg',
-    'img/IMG-20260914-WA0013.jpg',
-    'img/IMG-20260914-WA0014.jpg',
-    'img/IMG-20260914-WA0015.jpg',
-    'img/IMG-20260914-WA0016.jpg',
-    'img/IMG-20260916-WA0027.jpg',
-    'img/JUNTOS.webp',
-    'img/MESE%201.webp',
-    'img/MESES%202.webp',
-    'img/MI%20MIMO%201.webp',
-    'img/MI%20MIMO%202.webp',
-    'img/motion_photo_103894343051764961.jpg',
-    'img/motion_photo_1120853149090751683.jpg',
-    'img/motion_photo_1238747941965625335.jpg',
-    'img/motion_photo_1549668502139459518.jpg',
-    'img/motion_photo_1683334298475873232.jpg',
-    'img/motion_photo_1707079875662787590.jpg',
-    'img/motion_photo_2082299629117771404.jpg',
-    'img/motion_photo_2499772291074988993.jpg',
-    'img/motion_photo_3182785420361695234.jpg',
-    'img/motion_photo_3280292480786446058.jpg',
-    'img/motion_photo_3534743502450874842.jpg',
-    'img/motion_photo_4037352234326229645.jpg',
-    'img/motion_photo_5362492498561649651.jpg',
-    'img/motion_photo_5395659192329773646.jpg',
-    'img/motion_photo_5438695710058420547.jpg',
-    'img/motion_photo_5496219643701765308.jpg',
-    'img/motion_photo_6004101252014480581.jpg',
-    'img/motion_photo_7075009016324676230.jpg',
-    'img/motion_photo_752544663372879880.jpg',
-    'img/motion_photo_7555425390449517621.jpg',
-    'img/motion_photo_8261222058771140430.jpg',
-    'img/motion_photo_8694737091419444057.jpg',
-    'img/NUESTRA%20ESTRELLITA.webp',
-    'img/TU%20MIMO.webp'
-  ];
-  initSlider(fotos, 'slider', 'dots', 'prevBtn', 'nextBtn', 'count1');
+  monthTabs.forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      monthTabs.forEach(t=> t.classList.remove('active'));
+      tab.classList.add('active');
+      currentMonth = parseInt(tab.dataset.month, 10);
+      renderGrid(currentMonth);
+    });
+  });
+  renderGrid(currentMonth);
 
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbCount = document.getElementById('lbCount');
+
+  function updateLightbox(){
+    const arr = galeria[currentMonth];
+    lbImg.src = arr[currentIndex];
+    lbCount.textContent = (currentIndex+1)+' / '+arr.length;
+  }
+  function openLightbox(month, index){
+    currentMonth = month; currentIndex = index;
+    updateLightbox();
+    lightbox.classList.add('show');
+  }
+  function closeLightbox(){ lightbox.classList.remove('show'); }
+  function lbStep(dir){
+    const arr = galeria[currentMonth];
+    currentIndex = (currentIndex + dir + arr.length) % arr.length;
+    updateLightbox();
+  }
+  document.getElementById('lbClose').addEventListener('click', closeLightbox);
+  document.getElementById('lbPrev').addEventListener('click', ()=> lbStep(-1));
+  document.getElementById('lbNext').addEventListener('click', ()=> lbStep(1));
+  lightbox.addEventListener('click', e=>{ if(e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', e=>{
+    if(!lightbox.classList.contains('show')) return;
+    if(e.key === 'Escape') closeLightbox();
+    if(e.key === 'ArrowLeft') lbStep(-1);
+    if(e.key === 'ArrowRight') lbStep(1);
+  });
+  let lbTouchX = 0;
+  lightbox.addEventListener('touchstart', e=>{ lbTouchX = e.touches[0].clientX; }, {passive:true});
+  lightbox.addEventListener('touchend', e=>{
+    const dx = e.changedTouches[0].clientX - lbTouchX;
+    if(Math.abs(dx) > 40) lbStep(dx < 0 ? 1 : -1);
+  }, {passive:true});
   /* Para agregar videos nuevos: solo suma el nombre del archivo aqui, en el mismo formato */
   const videos = [
     'img/mi%20amorvideo.mp4',
@@ -596,4 +602,8 @@
 </script>
 </body>
 </html>
+
+
+
+
 
